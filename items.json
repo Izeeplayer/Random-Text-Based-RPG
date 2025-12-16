@@ -1,0 +1,39 @@
+[
+    {
+        "name": "Rusty Sword",
+        "traits": [
+            "Metal",
+            "Fragile",
+            "Starter",
+            "Rust"
+        ],
+        "weight": "3",
+        "price": 0.0,
+        "id": 1
+    },
+    {
+        "name": "Rusty Dagger",
+        "traits": [
+            "Metal",
+            "Fragile",
+            "Starter",
+            "Rust"
+        ],
+        "weight": 0.5,
+        "price": 0.0,
+        "id": 2
+    },
+    {
+        "name": "Blessed Blade of the Windseeker",
+        "traits": [
+            "Blessed",
+            "Metal",
+            "Magic",
+            "Air",
+            "Melee"
+        ],
+        "weight": 3.0,
+        "price": 450000.0,
+        "id": 3
+    }
+]
