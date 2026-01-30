@@ -30,7 +30,8 @@
             "Fragile",
             "Wood",
             "Starter",
-            "Ranged"
+            "Ranged",
+            "Rot"
         ],
         "weight": 1.5,
         "price": 0.0,

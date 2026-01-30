@@ -58,7 +58,9 @@ def traitHandler(job, ExisTraits = None):
                  "Fragile":"Fragile items have 1/2 the normal durability.",
                  "Starter":"Starter items are able to be acquired at the start of the game.",
                  "Rust":"Rusty items automatically gain the Fragile trait, but deal extra poison damage on a hit.",
-                 "Blessed": "Blessed weapons deal extra holy damage, which has extra effect on unholy creatures and no effect on holy creatures."}
+                 "Blessed": "Blessed weapons deal extra holy damage, which has extra effect on unholy creatures and no effect on holy creatures.",
+                 "Wood":"Has the qualities of wood, including lower durability, but being cheaper, and susceptibility to rot and fire.",
+                 "Rot":"Rotten items automatically gain the Fragile trait, but have a chance to inflict a disease on a hit."}
     npcTraits = {}
     equippableTraits = {}
     traits = []
