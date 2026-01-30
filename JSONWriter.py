@@ -2,7 +2,7 @@
 Program Name: JSON Writer
 Purpose: To easily be able to add items, NPCs, enemies, and more to JSON files.
 Author: Isaiah Wegwitz
-Last Modified: 12/03/2025
+Last Modified: 01/30/2026
 """
 import json
 import sys
@@ -10,26 +10,47 @@ import os.path
 
 """
 Features I still need to implement:
-1. I need to make it auto-assign ID values to the items. It should always count up, unless a number is missing (from an item being deleted), in which case, it fills in gaps.
+1. Prevent assigning the same id to multiple things.
 2. I need to be able to add more than just weapons to the items.
 3. I need to be able to add NPCs and Enemies as well.
 4. The ID values should be different ranges depending on if they are an item, NPC, or Enemy, that way there is no overlap.
 5. I might consider making it so the traits system is separate, in which case I just make base items, NPCs, and Enemies, and the RPG itself handles the traits. For example, 
     I'd make a sword, then the game would decide if the sword is metal, wood, or stone, if it's fragile, if it's magic, blessed, elemental, all that stuff.
 """
+def idAssign(entries):
+    allIDs = []
+    for i in entries:
+        allIDs.append(i["id"])
+    allIDs.sort()
+
+    startID = 1
+    for i in allIDs:
+        if i != startID:
+            return startID
+        startID += 1
+    return startID
 
 def readAllEntries(entries):
-    for i in entries:
+    sorted_entries = sorted(entries,key=lambda x: x["id"])
+    for i in sorted_entries:
         print(i)
 
 def deleteEntry(datas):
     originalLen = len(datas)
-    name = input("What is the name of the entry you would like to delete?\n")
-    datas = [data for data in datas if data["name"] != name]
+    name = input("What is the name of the entry you would like to delete?\nQ to quit\n")
+    if name == "q" or name == "Q":
+        return None
+    try:
+        id = int(name)
+        datas = [data for data in datas if data["id"] != id]
+    except:
+        datas = [data for data in datas if data["name"] != name]
+        dataType = "string"
 
-    if len(datas) == originalLen:
+    if len(datas) == originalLen and dataType == "string":
         raise ValueError(f"No item found with name {name}")
-    
+    elif len(datas) == originalLen:
+        raise ValueError(f"No item found with id {id}")
     return datas
 
 def traitHandler(job, ExisTraits = None):
@@ -102,8 +123,9 @@ def addEntry(datas, category):
         traits = traitHandler('create')
         weight = float(input("Input weight: "))
         price = float(input("Input price in Silver Pieces: "))
+        id = idAssign(datas)
 
-        newEntry = {"name":name,"traits":traits,"weight":weight,"price":price}
+        newEntry = {"name":name,"traits":traits,"weight":weight,"price":price, "id":id}
         datas.append(newEntry)
         return datas
 
@@ -115,27 +137,25 @@ def addEntry(datas, category):
         print("It shouldn't be possible to see this error message...")
 
 def changeEntry(datas):
+    dataType = "string"
     readAllEntries(datas)
-    choice = input("What entry would you like to modify?\nQ to quit")
+    choice = input("What entry would you like to modify?\nQ to quit\n")
     if choice.lower() == 'q':
-        print("Exiting Application...")
-        sys.exit()
+        return
     if "1" in choice or "2" in choice or "3" in choice or "4" in choice or "5" in choice or "6" in choice or "7" in choice or "8" in choice or "9" in choice or "0" in choice:
         choice = int(choice)
     for data in datas:
         if data["name"] == choice or data["id"] == choice:
-            willContinue = True
-            while willContinue:
+            while True:
                 print(data)
-                chosenKey = input("Enter N to quit\nSelect key to edit: ")
-                if chosenKey == "N" or chosenKey == 'n':
-                    willContinue = False
+                chosenKey = input("Select key to edit\n Enter q to Quit:\n")
+                if chosenKey == "Q" or chosenKey == 'q':
+                    break
                 elif chosenKey == "traits":
                     traits = data["traits"]
                     subsection = input("Would you like to [a]dd new traits, [d]elete some traits, or [b]oth?\nQ to quit   ").lower()
                     if subsection == "q":
-                        print("Exiting Application...")
-                        sys.exit()
+                        break
                     if subsection == 'a':
                         traits = traitHandler('create', traits)
                     elif subsection == 'd':
@@ -147,15 +167,21 @@ def changeEntry(datas):
                         print("That's not a valid option. Please try again.")
                         continue
                     data['traits'] = traits
-                else:
-                    newValue = input("What do you want to change the key to?\nPress Q to quit\n")
-                    if newValue == 'q' or newValue == "Q":
-                        print("Exiting Application...")
-                        sys.exit()
-                    try:
-                        data[chosenKey] = newValue
-                    except:
-                        print(f"{chosenKey} is not a trait of {data}")
+                elif chosenKey == "id":
+                    dataType = "int"
+                elif chosenKey == "price" or chosenKey == "weight":
+                    dataType = "float"
+                newValue = input("What do you want to change the key to?\nPress Q to quit\n")
+                if newValue == 'q' or newValue == "Q":
+                    break
+                if dataType == "int":
+                    newValue = int(newValue)
+                if dataType == "float":
+                    newValue = float(newValue)
+                try:
+                    data[chosenKey] = newValue
+                except:
+                    print(f"{chosenKey} is not a trait of {data}")
 
 
 def itemWriter():
@@ -167,19 +193,21 @@ def itemWriter():
     while continueEdit:
         with open(filename,'r') as file:
             data = json.load(file)
-            action = input("Would you like to [D]elete an entry, [A]lter an existing entry, [C]reate a new entry, or [M]ove to a different directory?\n").lower()
-            if action == 'd':
+            action = input("Would you like to [D]elete an entry, [A]lter an existing entry, [C]reate a new entry, [M]ove to a different directory, or [Q]uit?\n").lower()
+            if action == 'q' or action =='Q':
+                return
+            if action == 'd' or action == 'D':
                 readAllEntries(data)
                 data = deleteEntry(data)
                 with open(filename, 'w') as file:
                     json.dump(data,file,indent=4)
-            elif action == 'm':
+            elif action == 'm' or action == 'M':
                 continueEdit = False
-            elif action == 'c':
+            elif action == 'c' or action == 'C':
                 data = addEntry(data, 'item')
                 with open(filename,'w') as file:
                     json.dump(data, file, indent=4)
-            elif action == 'a':
+            elif action == 'a' or action == 'A':
                 changeEntry(data)
                 with open(filename, 'w') as file:
                     json.dump(data,file,indent=4)

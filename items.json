@@ -7,21 +7,9 @@
             "Starter",
             "Rust"
         ],
-        "weight": "3",
+        "weight": 3.0,
         "price": 0.0,
         "id": 1
-    },
-    {
-        "name": "Rusty Dagger",
-        "traits": [
-            "Metal",
-            "Fragile",
-            "Starter",
-            "Rust"
-        ],
-        "weight": 0.5,
-        "price": 0.0,
-        "id": 2
     },
     {
         "name": "Blessed Blade of the Windseeker",
@@ -34,6 +22,42 @@
         ],
         "weight": 3.0,
         "price": 450000.0,
+        "id": 9999
+    },
+    {
+        "name": "Brittle Bow",
+        "traits": [
+            "Fragile",
+            "Wood",
+            "Starter",
+            "Ranged"
+        ],
+        "weight": 1.5,
+        "price": 0.0,
+        "id": 4
+    },
+    {
+        "name": "Rusty Dagger",
+        "traits": [
+            "Metal",
+            "Rust",
+            "Starter",
+            "Fragile"
+        ],
+        "weight": 0.5,
+        "price": 0.0,
+        "id": 2
+    },
+    {
+        "name": "Degraded Wand",
+        "traits": [
+            "Starter",
+            "Wood",
+            "Fragile",
+            "Magic"
+        ],
+        "weight": 0.1,
+        "price": 0.0,
         "id": 3
     }
 ]
