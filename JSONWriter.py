@@ -8,8 +8,6 @@ import json
 import sys
 import os.path
 
-#Test
-
 """
 Features I still need to implement:
 1. Prevent assigning the same id to multiple things.
@@ -19,6 +17,12 @@ Features I still need to implement:
 5. I might consider making it so the traits system is separate, in which case I just make base items, NPCs, and Enemies, and the RPG itself handles the traits. For example, 
     I'd make a sword, then the game would decide if the sword is metal, wood, or stone, if it's fragile, if it's magic, blessed, elemental, all that stuff.
 """
+def search(entries,key,searchable):
+    for data in entries:
+        if data[key] == searchable:
+            return True, data["name"]
+    return False
+
 def idAssign(entries):
     allIDs = []
     for i in entries:
@@ -179,6 +183,25 @@ def changeEntry(datas):
                 if newValue == 'q' or newValue == "Q":
                     break
                 if dataType == "int":
+                    if chosenKey == "id":
+                        noMatch = False
+                        while not noMatch:
+                            found, result = search(datas,"id",newValue)
+                            if found:
+                                reply = input(f"ID {newValue} already assigned to {result}. Would you like to [T]ry again or [A]ssign a new ID to {result}?\n")
+                                if reply == "T" or reply == "t":
+                                    newValue = input("Input new id:\n")
+                                elif reply == 'A' or reply == 'a':
+                                    newNewValue = input(f"Please input a new ID for {result}.\n")
+                                    newFound = search(datas,"id",newNewValue)
+                                    if not newFound:
+                                        result["id"] = newNewValue
+                                    else:
+                                        print("Sorry, that ID is also already taken. Please try again.")
+                                else:
+                                    print("That wasn't one of the options. Let's just try this again...")
+                            else:
+                                noMatch = True
                     newValue = int(newValue)
                 if dataType == "float":
                     newValue = float(newValue)
